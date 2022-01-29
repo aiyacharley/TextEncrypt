@@ -11,3 +11,5 @@ __pycache__/
 venv3/
 
 Q*.csv
+decrypt_*.csv
+encrypt_*.csv
