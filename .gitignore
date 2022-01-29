@@ -1,0 +1,13 @@
+*.pyc
+*.swp
+
+build/
+dist/
+*.egg-info/
+__pycache__/
+
+.DS_Store
+.idea/
+venv3/
+
+Q*.csv
