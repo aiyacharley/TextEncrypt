@@ -8,15 +8,12 @@ TextEncrypt is enable to encrypt and decrypt the text of a file using AES algori
 
 Executable script (2022.01.29)
 
-- AES_encrypt_V3.py
-- AES_encrypt_V2.py
-- AES_encrypt_add.py
+- AES_encrypt.py
+
 
 ### Preparation
 1. `pip install pycryptodome`
-2. For AES_encrypt_V2.py and AES_encrypt_add.py
-	- `pip install pandas`
-3. Create a new file named **privateKeys.txt**, to store a key string of 16 arbitrary characters
+2. Create a new file named **privateKeys.txt**, to store a key string of 16/24/32 arbitrary characters
 
 ### Usage
 `python AES_encrypt_V3.py`

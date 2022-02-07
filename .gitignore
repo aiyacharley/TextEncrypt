@@ -6,11 +6,9 @@ dist/
 *.egg-info/
 __pycache__/
 
-.DS_Store
-.idea/
-venv3/
 
 Q*.csv
 decrypt_*.csv
 encrypt_*.csv
 demoFiles*/
+backupFiles/

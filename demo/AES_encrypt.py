@@ -25,7 +25,6 @@ def check_file():
     print("=========输入以逗号为分隔符的文件=========")
     inName = input("输入文件名or带通配符的文件格式：")
     files = glob(inName)
-    print(files)
     filesList = []
     for inF in files:
         if os.path.exists(inF):
@@ -40,9 +39,9 @@ def check_file():
 
 def check_var(columns, inName):
     print("=========(%s)请输入你要处理的变量名===========" % inName)
-    TargetV = input("输入变量名（以逗号分隔，0则全部变量）：")
+    TargetV = input("输入变量名（以逗号分隔，0则全部变量，默认为0）：")
     # print(TargetV)
-    if str(TargetV) == "0":
+    if str(TargetV) == "0" or TargetV == '':
         TargetVars = list(columns)
     else:
         TargetVars = re.split(",|，", TargetV)
