@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import re
+from glob import glob
 # 安装Crypto，pip install pycryptodome
 # C:\Users\Administrator\AppData\Local\Programs\Python\Python36\Lib\site-packages
 # 找到这个路径，下面有一个文件夹叫做crypto,将c改成C，对就是改成大写就ok了！！！
@@ -23,17 +23,23 @@ def check_type():
         
 def check_file():
     print("=========输入以逗号为分隔符的文件=========")
-    inName = input("输入文件名：")
-    if os.path.exists(inName):
-        return(inName)
-    else:
-        print("\n不存在(%s)文件，请输入正确的文件名" % inName)
-        inName = check_file()
-        return(inName)
+    inName = input("输入文件名or带通配符的文件格式：")
+    files = glob(inName)
+    print(files)
+    filesList = []
+    for inF in files:
+        if os.path.exists(inF):
+            print("存在(%s)文件" % inF)
+            filesList.append(inF)
+        else:
+            print("不存在(%s)文件，请输入正确的文件名" % inF)
+            inName = check_file()
+            return(inName)
+    return(",".join(filesList))
 
 
-def check_var(columns):
-    print("=========请输入你要处理的变量名===========")
+def check_var(columns, inName):
+    print("=========(%s)请输入你要处理的变量名===========" % inName)
     TargetV = input("输入变量名（以逗号分隔，0则全部变量）：")
     # print(TargetV)
     if str(TargetV) == "0":
@@ -45,7 +51,7 @@ def check_var(columns):
         return(TargetVars)
     else:
         print("\n输入的变量名%s有误，请输入正确的变量名" % (set(TargetVars)-set(columns)))
-        TargetVars = check_var(columns)
+        TargetVars = check_var(columns, inName)
         return(TargetVars)
 
 
@@ -108,7 +114,7 @@ class AesCrypto():
 
 
 def main():
-    out = open(outFile, 'w', encoding='gbk', newline="")
+    out = open(outFile, 'w', encoding='utf-8-sig', newline="")
     out.write(header+'\n')
     for line in handle:
         rec = re.split(",", line.strip())
@@ -142,20 +148,22 @@ if __name__ == '__main__':
     pc = AesCrypto(key=key)  # key的长度必须是16的倍数,key不设置则为默认的16个0
     print("=========请选择你要使用的模式=============")
     label = check_type()  # label=="0"为加密，=="1"为解密
-    inName = check_file()
-    if label == "0":
-        outFile = "encrypt_"+inName
-    else:
-        outFile = "decrypt_"+inName
-    try:
-        handle = open(inName, 'rt', encoding='utf-8-sig')
-        header = next(handle).strip()
-    except:  # noqa: E722
-        handle = open(inName, 'rt', encoding='gbk')
-        header = next(handle).strip()
+    inNames = check_file()
+    for inName in inNames.split(','):
+        if label == "0":
+            outFile = "encrypt_"+inName
+        else:
+            outFile = "decrypt_"+inName
+        try:
+            handle = open(inName, 'rt', encoding='utf-8-sig')
+            header = next(handle).strip()
+        except Exception as e:
+            handle = open(inName, 'rt', encoding='gbk')
+            header = next(handle).strip()
+            print(e)
 
-    headerL = re.split(",", header.strip())
-    TargetVars = check_var(headerL)
-    TargetVarsIndex = [headerL.index(v) for v in TargetVars]
+        headerL = re.split(",", header.strip())
+        TargetVars = check_var(headerL, inName)
+        TargetVarsIndex = [headerL.index(v) for v in TargetVars]
 
-    main()
+        main()

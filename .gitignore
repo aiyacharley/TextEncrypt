@@ -13,3 +13,4 @@ venv3/
 Q*.csv
 decrypt_*.csv
 encrypt_*.csv
+demoFiles*/
