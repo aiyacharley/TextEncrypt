@@ -25,6 +25,11 @@ def check_file():
     print("=========输入以逗号为分隔符的文件=========")
     inName = input("输入文件名or带通配符的文件格式：")
     files = glob(inName)
+    if len(files) == 0:
+        print("不存在(%s)文件，请输入正确的文件名" % inName)
+        inName = check_file()
+        return(inName)
+
     filesList = []
     for inF in files:
         if os.path.exists(inF):
@@ -112,8 +117,8 @@ class AesCrypto():
             return(text)
 
 
-def main():
-    out = open(outFile, 'w', encoding='utf-8-sig', newline="")
+def process(handle, header, label, pc, TargetVarsIndex, outFile):
+    out = open(outFile, 'w', encoding='utf-8', newline="")
     out.write(header+'\n')
     for line in handle:
         rec = re.split(",", line.strip())
@@ -134,14 +139,12 @@ def main():
     out.close()
 
     print("完成！输出文件名：%s\n" % outFile)
-    os.system('pause')  # 按任意键继续
+    # os.system('pause')  # 按任意键继续
 
 
-if __name__ == '__main__':
-    # global label,inName
-    os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+def TextEncrypt():
     print("=====欢迎使用文件内容加密、解密工具=======")
-    print("工具版本：beta 0.3 (2022.01.29)")
+    print("工具版本：beta 0.3")
     print("维护人员：WangCR\n")
     key = check_key()
     pc = AesCrypto(key=key)  # key的长度必须是16的倍数,key不设置则为默认的16个0
@@ -154,15 +157,22 @@ if __name__ == '__main__':
         else:
             outFile = "decrypt_"+inName
         try:
-            handle = open(inName, 'rt', encoding='utf-8-sig')
-            header = next(handle).strip()
-        except Exception as e:
             handle = open(inName, 'rt', encoding='gbk')
             header = next(handle).strip()
-            print(e)
+        except Exception as e:
+            handle = open(inName, 'rt', encoding='utf-8-sig')
+            header = next(handle).strip()
+            # print(e)
 
         headerL = re.split(",", header.strip())
         TargetVars = check_var(headerL, inName)
         TargetVarsIndex = [headerL.index(v) for v in TargetVars]
 
-        main()
+        process(handle, header, label, pc, TargetVarsIndex, outFile)
+
+
+if __name__ == '__main__':
+    # global label,inName
+    os.chdir(os.path.abspath(os.path.dirname(sys.argv[0])))
+    TextEncrypt()
+    
